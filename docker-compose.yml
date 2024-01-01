@@ -1,0 +1,38 @@
+version: "3.7"
+
+services:
+  #  This section of the Docker Compose file is defining a service called "app".
+  app:
+    build: ./docker
+    image: thecodeholic/php_mvc
+    ports:
+      - "8080:80"
+    volumes:
+      # Mount source-code for development
+      - ./:/var/www
+    depends_on:
+      - phpmyadmin
+  #  The `db` section in the Docker Compose file is defining a service called "db" which is using the `mysql:8` image.
+  db:
+    image: mysql:8
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./docker/mysql-config.cnf:/etc/mysql/conf.d/config.cnf
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+  # The `phpmyadmin` section in the Docker Compose file is defining a service called "phpmyadmin" which is using the `phpmyadmin/phpmyadmin` image.
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_HOST: 'db'
+      PMA_PORT: '3306'
+      MYSQL_ROOT_PASSWORD: 'root' # Use the same root password as in the MySQL container
+    ports:
+      - '5050:80'
+    depends_on:
+      - db
+# The `volumes` section in the Docker Compose file is defining a named volume called "mysql-data".
+volumes:
+  mysql-data:

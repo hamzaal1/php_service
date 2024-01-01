@@ -1,0 +1,20 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Force remove PHP file extension
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME}.php -f
+    RewriteRule ^([^/]+)/?$ $1.php [L]
+
+    # Redirect requests with .php extension to extensionless URL
+    RewriteCond %{THE_REQUEST} ^[A-Z]+\s/(.+)\.php [NC]
+    RewriteRule ^ /%1 [R=301,L]
+
+    # Allow any files or directories that exist to be displayed directly
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Rewrite all other URLs to index.php/URL
+    RewriteRule ^(.*)$ index.php/$1 [L]
+</IfModule>
